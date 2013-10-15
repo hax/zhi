@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<title>Test Pan</title>
+<meta name="viewport" content="width=device-width">
+<style>
+#ground {
+	margin: 1em;
+	padding: 1em;
+	border: medium solid;
+}
+#ball {
+	width: 3em;
+	height: 3em;
+	border-radius: 1.5em;
+	background: red;
+}
+</style>
+<script src="../src/index.js"></script>
+</head>
+<body>
+
+<article id="ground">
+	<div id="ball"></div>	
+</article>
+<script>
+Zhi.detectGesture(document.getElementById('ground'), ['pan'])
+
+document.getElementById('ball').addEventListener('pan', function(event){
+	console.log(event.motion)
+	var s = event.currentTarget.style
+	s.transform = 'translateZ(0) translate(' +
+		event.motion.dx + 'px, ' + 
+		event.motion.dy + 'px)'
+})
+</script>
+
+</body>
+</html>
