@@ -12,8 +12,12 @@ void function(win){
 	function detectGesture(e, gestures) {
 
 		var touches = {}
-		var detectors = gestures.map(function(gestureType){
-			return GestureDetector[gestureType]
+		var detectors = gestures.map(function(gesture){
+			if (typeof gesture === 'string')
+				return GestureDetector[gesture]
+			else if (gesture instanceof GestureDetector)
+				return gesture
+			else throw TypeError()
 		})
 
 		function gc(id) {
@@ -112,14 +116,17 @@ void function(win){
 		evt.motion = initDict.motion
 		return evt
 	}
-	TouchGestureEvent.prototype = UIEvent.prototype
+	TouchGestureEvent.prototype = win.UIEvent.prototype
 
-	var TapDetector = {
-		TAP_TIME_THRESHOLD: 200, //ms
-		TAP_MOTION_THRESHOLD: 16, //px
-		ontouchstart: function(evt){
-		},
-		ontouchend: function(evt, touches){
+	function TapDetector(settings) {
+		GestureDetector.call(this, settings)
+	}
+	TapDetector.prototype = Object.create(GestureDetector.prototype, {
+		settings: {value: {
+			TAP_TIME_THRESHOLD: 200, //ms
+			TAP_MOTION_THRESHOLD: 16 //px
+		}},
+		ontouchend: {value: function(evt, touches){
 			if (evt.changedTouches.length === 1) {
 				var touch = touches[evt.changedTouches[0].identifier]
 				var m = new Motion(touch.start, touch.end)
@@ -144,10 +151,9 @@ void function(win){
 					//return result
 				}
 			}
-		},
-		ontouchmove: noop,
-		ontouchcancel: noop
-	}
+		}},
+	})
+
 	var PanDetector = {
 		PAN_MOTION_THRESHOLD: 10, //px, 2.7mm
 		ontouchstart: noop,
@@ -246,11 +252,25 @@ void function(win){
 		},
 		ontouchcancel: noop
 	}
-	var GestureDetector = {
-		tap: TapDetector,
-		pan: PanDetector,
-		flick: FlickDetector
+	function GestureDetector(settings) {
+		this.overrideSettings(settings)
 	}
+	Object.defineProperties(GestureDetector.prototype, {
+		ontouchstart: {value: noop},
+		ontouchend: {value: noop},
+		ontouchmove: {value: noop},
+		ontouchcancel: {value: noop},
+		overrideSettings: {value: function(settings){
+			for (var key in settings) {
+				this.settings[key] = settings[key]
+			}
+		}}
+	})
+	Object.defineProperties(GestureDetector, {
+		tap: {value: new TapDetector()},
+		pan: {value: PanDetector},
+		flick: {value: FlickDetector}
+	})
 
 	//detectGesture(window, ['tap', 'flick', 'pan'])
 
