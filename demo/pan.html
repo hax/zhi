@@ -4,12 +4,12 @@
 <title>Test Pan</title>
 <meta name="viewport" content="width=device-width">
 <style>
-#ground {
+article {
 	margin: 1em;
 	padding: 1em;
 	border: medium solid;
 }
-#ball {
+#ball1, #ball2 {
 	width: 3em;
 	height: 3em;
 	border-radius: 1.5em;
@@ -20,18 +20,54 @@
 </head>
 <body>
 
-<article id="ground">
-	<div id="ball"></div>	
+<article id="ground1">
+	<div id="ball1"></div>	
 </article>
 <script>
-Zhi.detectGesture(document.getElementById('ground'), ['pan'])
+Zhi.detectGesture(document.getElementById('ground1'), ['pan'])
 
-document.getElementById('ball').addEventListener('pan', function(event){
-	console.log(event.motion)
-	var s = event.currentTarget.style
-	s.transform = 'translateZ(0) translate(' +
-		event.motion.dx + 'px, ' + 
-		event.motion.dy + 'px)'
+var ball = document.getElementById('ball1')
+ball.addEventListener('pan', function(event){
+	var ball = event.currentTarget
+	var x = parseInt(ball.dataset.x || 0, 10),
+		y = parseInt(ball.dataset.y || 0, 10),
+		s = ball.style
+	s.transform = s.webkitTransform =
+		'translateZ(0) translate(' +
+		(x + event.motion.dx) + 'px, ' + 
+		(y + event.motion.dy) + 'px)'
+})
+ball.addEventListener('panstart', function(event){
+
+})
+ball.addEventListener('panend', function(event){
+	var ball = event.currentTarget
+	ball.dataset.x = parseInt(ball.dataset.x || 0, 10) + event.motion.dx
+	ball.dataset.y = parseInt(ball.dataset.y || 0, 10) + event.motion.dy
+})
+</script>
+
+<article id="ground2">
+	<div id="ball2"></div>	
+</article>
+<script>
+Zhi.detectGesture(document.getElementById('ground2'), ['pan'])
+
+var ball = document.getElementById('ball2')
+ball.addEventListener('pan', function(event){
+	var ball = event.currentTarget
+	var x = parseInt(ball.dataset.x || 0, 10),
+		s = ball.style
+	s.transform = s.webkitTransform =
+		'translateZ(0) translateX(' +
+		(x + event.motion.dx) + 'px)'
+})
+ball.addEventListener('panstart', function(event){
+
+})
+ball.addEventListener('panend', function(event){
+	var ball = event.currentTarget
+	ball.dataset.x = parseInt(ball.dataset.x || 0, 10) + event.motion.dx
 })
 </script>
 
