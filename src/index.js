@@ -130,9 +130,9 @@ void function(win){
 			if (evt.changedTouches.length === 1) {
 				var touch = touches[evt.changedTouches[0].identifier]
 				var m = new Motion(touch.start, touch.end)
-				if (m.dt < this.TAP_TIME_THRESHOLD &&
-					m.dist < this.TAP_MOTION_THRESHOLD
-					) {
+				if (m.dt < this.settings.TAP_TIME_THRESHOLD &&
+					m.dist < this.settings.TAP_MOTION_THRESHOLD
+				) {
 					var e = new TouchGestureEvent('tap', {
 						bubbles: true, cancelable:true,
 						motion: m
