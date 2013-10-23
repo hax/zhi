@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<title>Test Tap</title>
+<meta name="viewport" content="width=device-width">
+<style>
+html {
+	font-size: 2em;
+}
+#layer {
+	position: fixed;
+	left: 1em;
+	top: 0;
+	right: 1em;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	background: white;
+}
+#ground {
+	margin: 1em;
+	padding: 1em;
+	border: medium solid;
+	pointer-events: none;
+}
+a {
+	display: block;
+}
+#out {
+	overflow: auto;
+}
+</style>
+<script src="../src/index.js"></script>
+</head>
+<body>
+
+
+<article id="layer"></article>
+
+<article id="ground">
+	<a href="#" onclick="alert(navigator.userAgent)">test</a>
+</article>
+
+<pre id="out">
+	<p>a long long long sentence!</p>
+</pre>
+
+<script>
+void function(){
+	
+	var layer = document.getElementById('layer')
+	var ground = document.getElementById('ground')
+
+	window.addEventListener('touchend', function(evt){
+		layer.style.visibility = 'hidden'
+		ground.style.pointerEvents = 'auto'
+		evt.preventDefault()
+		evt.stopPropagation()
+		return true
+	}, true)
+
+	window.addEventListener('mousemove', function(evt){
+		evt.preventDefault()
+		evt.stopPropagation()
+		return false
+	}, false)
+
+	logEvents(layer)
+	logEvents(ground)
+
+	function logEvents(e) {
+		e.addEventListener('touchstart', doLog)
+		e.addEventListener('touchend', doLog)
+		e.addEventListener('touchmove', doLog)
+		e.addEventListener('touchcancel', doLog)
+		e.addEventListener('mousedown', doLog)
+		e.addEventListener('mouseup', doLog)
+		e.addEventListener('mousemove', doLog)
+		e.addEventListener('click', doLog)		
+		e.addEventListener('DOMActivate', doLog)		
+	}
+
+	function doLog(evt) {
+		$log(evt.type, evt.isTrusted, evt.target.nodeName, evt.currentTarget.nodeName)
+	}
+
+
+	function $log() {
+		$log.buffer.push([].join.call(arguments, ' '))
+	}
+	$log.buffer = []
+
+	window.onerror = doLog
+
+
+	setInterval(function(){
+		if ($log.buffer.length > 0) {
+			document.getElementById('out').innerHTML += $log.buffer.join('\n') + '\n'
+			$log.buffer = []
+		}
+	}, 1)
+
+}()
+</script>
+
+</body>
+</html>
