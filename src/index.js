@@ -41,7 +41,7 @@ void function(win){
 			}
 			// most Android browsers need calling preventDefault()
 			// to allow future touchmove events
-			evt.preventDefault()
+			//evt.preventDefault()
 		})
 		e.addEventListener('touchend', function(evt){
 			for (var list = evt.changedTouches, n = list.length, i = 0; i < n; i++) {
@@ -74,7 +74,6 @@ void function(win){
 			for (var i = 0; i < detectors.length; i++)
 				detectors[i].ontouchmove(evt, touches)
 
-			//evt.preventDefault()
 		})
 		e.addEventListener('touchcancel', function(evt){
 			for (var list = evt.changedTouches, n = list.length, i = 0; i < n; i++) {
@@ -177,12 +176,16 @@ void function(win){
 				var m = new Motion(touch.start, touch.moves[touch.moves.length - 1])
 				if (!touch.pan) {
 					if (m.dist > this.PAN_MOTION_THRESHOLD) {
-						touch.pan = m
 						var e = new TouchGestureEvent('panstart', {
 							bubbles: true,
 							motion: m
 						})
-						return evt.target.dispatchEvent(e)
+						evt.target.dispatchEvent(e)
+						if (!e.defaultPrevented) {
+							touch.pan = m
+							evt.preventDefault()
+						}
+						return
 					}
 				} else {
 					var e = new TouchGestureEvent('pan', {
