@@ -1,12 +1,14 @@
-== zhi ==
+## zhi ##
 
 触摸和指点设备手势库
 
-=== Usage ===
+### Usage ###
 
-```javascript
+```html
+<script src="zhi.js">
+<script>
 var containerElement = document.getElementById('ground')
-Zhi.detectGesture(containerElement, ['tap', 'pan'])
+Zhi.detectGesture(containerElement, ['tap', 'pan-x'])
 
 var targetElement = document.getElementById('ball')
 ball.addEventListener('tap', function(){
@@ -15,4 +17,11 @@ ball.addEventListener('tap', function(){
 ball.addEventListener('pan', function(event){
 	console.log(event.motion)
 })
+</script>
 ```
+
+### Support gestures and events ###
+
+* Tap
+* Pan
+* Flick
