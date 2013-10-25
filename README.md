@@ -1,9 +1,10 @@
-==zhi==
+== zhi ==
 
 触摸和指点设备手势库
 
-===Usage===
+=== Usage ===
 
+```javascript
 var containerElement = document.getElementById('ground')
 Zhi.detectGesture(containerElement, ['tap', 'pan'])
 
@@ -14,3 +15,4 @@ ball.addEventListener('tap', function(){
 ball.addEventListener('pan', function(event){
 	console.log(event.motion)
 })
+```
