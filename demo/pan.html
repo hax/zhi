@@ -4,6 +4,9 @@
 <title>Test Pan</title>
 <meta name="viewport" content="width=device-width">
 <style>
+html {
+	font-size: 2em;
+}
 article {
 	margin: 1em;
 	padding: 1em;
@@ -14,8 +17,12 @@ article {
 	height: 3em;
 	border-radius: 1.5em;
 	background: red;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
 }
 </style>
+<script src="../src/log.js"></script>
+<script src="../src/CustomEvent.js"></script>
 <script src="../src/index.js"></script>
 </head>
 <body>
@@ -50,8 +57,9 @@ ball.addEventListener('panend', function(event){
 <article id="ground2">
 	<div id="ball2"></div>	
 </article>
+
 <script>
-Zhi.detectGesture(document.getElementById('ground2'), ['pan'])
+Zhi.detectGesture(document.getElementById('ground2'), ['pan-x'])
 
 var ball = document.getElementById('ball2')
 ball.addEventListener('pan', function(event){
@@ -70,6 +78,10 @@ ball.addEventListener('panend', function(event){
 	ball.dataset.x = parseInt(ball.dataset.x || 0, 10) + event.motion.dx
 })
 </script>
+
+<article>
+	<p>1<p>2<p>3<p>4<p>5<p>6<p>7<p>8<p>9
+</article>
 
 </body>
 </html>
