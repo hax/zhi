@@ -127,9 +127,6 @@ void function(win){
 			for (var i = 0; i < detectors.length; i++){
 				detectors[i].ontouchstart(evt, touches)
 			}
-			// most Android browsers need calling preventDefault()
-			// to allow future touchmove events
-			//evt.preventDefault()
 		})
 		e.addEventListener('touchend', function(evt){
 			for (var list = evt.changedTouches, n = list.length, i = 0; i < n; i++) {
@@ -320,6 +317,8 @@ void function(win){
 						evt.target.dispatchEvent(e)
 						if (!e.defaultPrevented) {
 							touch.pan = m
+							// most Android browsers need calling preventDefault()
+							// to allow future touchmove events
 							evt.preventDefault()
 						}
 						return
