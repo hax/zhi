@@ -58,7 +58,7 @@ void function(win){
 		}
 
 		var touches = {}
-		
+
 		function gc(id) {
 			setTimeout(function(){
 				delete touches[id]
@@ -185,7 +185,7 @@ void function(win){
 	}
 	TouchGestureEvent.prototype = win.UIEvent.prototype
 
-	
+
 	var noop = function(){}
 
 	function GestureDetector(settings) {
@@ -218,14 +218,14 @@ void function(win){
 				var m = new Motion(touch.start, touch.end)
 				if (m.dt < this.settings.TAP_TIME_THRESHOLD &&
 					m.dist < this.settings.TAP_MOTION_THRESHOLD
-				) {
+					) {
 					var e = new TouchGestureEvent('tap', {
 						bubbles: true, cancelable:true,
 						motion: m
 					})
 					var result = evt.target.dispatchEvent(e)
-					if (e.defaultPrevented === false
-						|| e.defaultPrevented === undefined && e.returnValue !== false // Android 2.x bug: no defaultPrevented attr
+					if (e.defaultPrevented === false ||
+						e.defaultPrevented === undefined && e.returnValue !== false // Android 2.x bug: no defaultPrevented attr
 					) {
 						evt.preventDefault()
 						var clickEvt = new MouseEvent('click', {
