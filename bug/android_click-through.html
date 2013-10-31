@@ -10,17 +10,15 @@ html {
 #layer {
 	position: fixed;
 	left: 1em;
-	top: 0;
+	top: 1em;
 	right: 1em;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.6);
-	background: white;
+	bottom: 1em;
+	background: rgba(0, 0, 0, 0.5);
 }
 #ground {
 	margin: 1em;
 	padding: 1em;
 	border: medium solid;
-	pointer-events: none;
 }
 a {
 	display: block;
@@ -29,20 +27,21 @@ a {
 	overflow: auto;
 }
 </style>
+<script src="../src/log.js"></script>
 <script src="../src/index.js"></script>
 </head>
 <body>
 
 
-<article id="layer"></article>
+<article id="layer">layer</article>
 
 <article id="ground">
 	<a href="#" onclick="alert(navigator.userAgent)">test</a>
 </article>
 
-<pre id="out">
-	<p>a long long long sentence!</p>
-</pre>
+<article>
+	<p>1<p>2<p>3<p>4<p>5<p>6<p>7<p>8<p>9<p>0
+</article>
 
 <script>
 void function(){
@@ -51,18 +50,15 @@ void function(){
 	var ground = document.getElementById('ground')
 
 	window.addEventListener('touchend', function(evt){
-		layer.style.visibility = 'hidden'
-		ground.style.pointerEvents = 'auto'
+		//layer.style.visibility = 'hidden'
+		//layer.style.opacity = '0'
+		layer.style.pointerEvents = 'none'
+		/*setTimeout(function(){
+			window.scrollBy(0, 20)
+		}, 299)*/
 		evt.preventDefault()
 		evt.stopPropagation()
-		return true
 	}, true)
-
-	window.addEventListener('mousemove', function(evt){
-		evt.preventDefault()
-		evt.stopPropagation()
-		return false
-	}, false)
 
 	logEvents(layer)
 	logEvents(ground)
@@ -83,21 +79,6 @@ void function(){
 		$log(evt.type, evt.isTrusted, evt.target.nodeName, evt.currentTarget.nodeName)
 	}
 
-
-	function $log() {
-		$log.buffer.push([].join.call(arguments, ' '))
-	}
-	$log.buffer = []
-
-	window.onerror = doLog
-
-
-	setInterval(function(){
-		if ($log.buffer.length > 0) {
-			document.getElementById('out').innerHTML += $log.buffer.join('\n') + '\n'
-			$log.buffer = []
-		}
-	}, 1)
 
 }()
 </script>
