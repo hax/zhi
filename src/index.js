@@ -1,13 +1,62 @@
 void function(win){
 	'use strict'
 
+	// tap => tap1 | tap2 | tap3 | ...
+	// dbltap => dbltap1 | dbltap2 | dbltap3 | ...
+	// panstart => pan, pan, panend => flick
+	// holdstart => hold, hold-pan, holdend
+	// drag, swipe/slide, flick/fling, pinch/stretch/spread, turn/rotate
+
 	var Touch = {
-		version: '0.1',
+		version: '0.2',
 		detectGesture: detectGesture
 	}
 
-	//tap, dbltap, hold
-	//pan, drag, swipe/slide, flick/fling, pinch/stretch/spread, turn/rotate
+	var buggyFakeMouseEvent = win.navigator.userAgent.match(/\bAndroid/)
+	if (buggyFakeMouseEvent) var killFakeMouseEvent = function(){
+		
+		var DELAY = 300//ms
+		var fakeMouseEvents = []
+
+		function filterMouseEvents(event) {
+			for (var i = 0, n = fakeMouseEvents.length; i < n; i++) {
+				var e = fakeMouseEvents[i]
+				if (e && e.type === event.type) {
+					var dt = event.timeStamp - e.timeStamp
+					var dx = event.screenX - e.screenX
+					var dy = event.screenY - e.screenY
+					if (dt >= DELAY && Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+						event.preventDefault()
+						event.stopPropagation()
+						fakeMouseEvents[i] = null
+						return
+					} else {
+						$warn('buggy fake mouse event?', event, dt, dx, dy)
+					}
+				}
+			}
+		}
+
+		win.addEventListener('mousemove', filterMouseEvents, true)
+		win.addEventListener('mousedown', filterMouseEvents, true)
+		win.addEventListener('mouseup', filterMouseEvents, true)
+		win.addEventListener('click', filterMouseEvents, true)
+
+		return function (event) {
+			var i = fakeMouseEvents.length
+			while (i > 0) {
+				i--
+				if (fakeMouseEvents[i]) break
+			}
+			i++
+			fakeMouseEvents.splice(i, Infinity, event)
+			setTimeout(function(i){
+				$warn('no buggy fake mouse event?', fakeMouseEvents[i])
+				fakeMouseEvents[i] = null
+			}, DELAY, i)
+		}
+
+	}()
 
 	function detectGesture(e, gestures) {
 
@@ -58,7 +107,7 @@ void function(win){
 		}
 
 		var touches = {}
-		
+
 		function gc(id) {
 			setTimeout(function(){
 				delete touches[id]
@@ -185,8 +234,8 @@ void function(win){
 	}
 	TouchGestureEvent.prototype = win.UIEvent.prototype
 
-	
 	var noop = function(){}
+
 
 	function GestureDetector(settings) {
 		this.settings = Object.create(this.defaultSettings)
@@ -220,17 +269,26 @@ void function(win){
 					m.dist < this.settings.TAP_MOTION_THRESHOLD
 				) {
 					var e = new TouchGestureEvent('tap', {
-						bubbles: true, cancelable:true,
+						bubbles: true, cancelable: true,
 						motion: m
 					})
 					var result = evt.target.dispatchEvent(e)
-					if (e.defaultPrevented === false
-						|| e.defaultPrevented === undefined && e.returnValue !== false // Android 2.x bug: no defaultPrevented attr
+					if (e.defaultPrevented === false ||
+						// Android 2.x bug: no defaultPrevented attr
+						e.defaultPrevented === undefined && e.returnValue !== false
 					) {
 						evt.preventDefault()
+						if (buggyFakeMouseEvent) killFakeMouseEvent({
+							type: 'click', 
+							screenX: touch.end.x,
+							screenY: touch.end.y,
+							timeStamp: evt.timeStamp
+						})
 						var clickEvt = new MouseEvent('click', {
 							bubbles: true,
-							cancelable: true
+							cancelable: true,
+							screenX: touch.end.x,
+							screenY: touch.end.y
 						})
 						evt.target.dispatchEvent(clickEvt)
 					} //else $warn('tap cancelled')
@@ -354,7 +412,6 @@ void function(win){
 		panY: {value: new PanDetector({direction: Direction.Y})},
 		flick: {value: FlickDetector}
 	})
-
 
 	win.Zhi = Touch
 
