@@ -11,10 +11,10 @@ var containerElement = document.getElementById('ground')
 Zhi.detectGesture(containerElement, ['tap', 'pan-x'])
 
 var targetElement = document.getElementById('ball')
-ball.addEventListener('tap', function(){
+targetElement.addEventListener('tap', function(){
 	alert('Oops!')
 })
-ball.addEventListener('pan', function(event){
+targetElement.addEventListener('pan', function(event){
 	console.log(event.motion)
 })
 </script>
